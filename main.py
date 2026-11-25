@@ -1,0 +1,35 @@
+"""Write the one-star alien review of Earth to /output/entry.txt and verify it."""
+
+ENTRY = "One star: I crossed forty light-years to a planet lit by a single unshielded bulb in the sky, yet the ramen was so good I grew a second stomach just to finish the bowl."
+
+OUTPUT_PATHS = ["/output/entry.txt", "./output/entry.txt"]
+
+
+def main() -> None:
+    assert 1 <= len(ENTRY) <= 200, "entry must be 1-200 characters"
+    assert ENTRY.strip(), "entry must not be only whitespace"
+
+    written_path = None
+    last_error = None
+    for path in OUTPUT_PATHS:
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(ENTRY)
+            written_path = path
+            break
+        except OSError as exc:  # e.g. /output not writable; try the fallback
+            last_error = exc
+    if written_path is None:
+        raise RuntimeError(f"could not write entry: {last_error}")
+
+    with open(written_path, "r", encoding="utf-8") as f:
+        read_back = f.read()
+    assert read_back == ENTRY, "round-trip mismatch"
+
+    print(ENTRY)
+    print(f"characters: {len(ENTRY)}")
+    print(f"wrote: {written_path}")
+
+
+if __name__ == "__main__":
+    main()
